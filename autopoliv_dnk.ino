@@ -837,28 +837,16 @@ void MAIN() {
             lcd.print("ПОМПЫ:");
 
             if (enc1.isRight()) {
-                //if (++menu_circle >= 4) menu_circle = 0;
-                for (int i=0; i < 4; i++ ) { menu_circle_min[i] = 10; }
+                for (int i=0; i < 4; i++ ) { menu_circle_min[i] = 9; }
             } else if (enc1.isLeft()) {
                 for (int i=0; i < 4; i++ ) { menu_circle_min[i] = 0; }
-                //if (--menu_circle < 0) menu_circle = 3;
             }
 
             lcd.setCursor(8, 2);
 
             for (int i = 0; i < 4; i++) {
-                if ( i == menu_circle ) {
-                    lcd.write(126);
-                } else {
-                    lcd.write(" ");
-                }
+                lcd.write(" ");
                 lcd.print(menu_circle_min[i]);
-            }
-
-            if (enc1.isRightH()) {
-                menu_circle_min[menu_circle]++;
-            } else if (enc1.isLeftH()) {
-                if (--menu_circle_min[menu_circle] < 0) menu_circle_min[menu_circle] = 0;
             }
     }
 }
