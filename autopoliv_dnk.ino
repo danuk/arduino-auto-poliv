@@ -8,6 +8,25 @@
 ///--------------------------------------------------------------------------------------------ВЕРСИЯ ПРОШИВКИ
 #define VER "DOSER ver_02_09_2021"
 
+struct pumps_struct {
+    int Pin;
+    char name[8];
+    char prefix[2];
+};
+
+pumps_struct pumps[] = {
+    7, "ГАЗОН", "Г1",
+    8, "ТУИ", "Т",
+    9, "ГАЗОН2", "Г2",
+    10, "ГАЗОН3", "Г3",
+};
+
+//////----------------Распиновка помп
+#define P1_Pin 7
+#define P2_Pin 8
+#define P3_Pin 9
+#define P4_Pin 10
+
 ///----названия на главном экране
 #define P1 "Г1"
 #define P2 "Т"
@@ -31,12 +50,6 @@
 ///----Энкодер
 
 //////----------------Распиновка помп
-#define P1_Pin 7
-#define P2_Pin 8
-#define P3_Pin 9
-#define P4_Pin 10
-
-//////----------------Распиновка помп
 #define DELAY_MENU 200
 #include "GyverEncoder.h"
 Encoder enc1(CLK, DT, SW);
@@ -56,6 +69,9 @@ LCD_1602_RUS lcd(0x3f, 20, 4);
 byte lcd_off[2]={8,21};
 int8_t menu_val = 1;
 int8_t menu_val_2 = 0;
+int8_t menu_circle = 0;
+int8_t menu_circle_min_cur = 0;
+int8_t menu_circle_min[] = {0, 0, 0, 0};
 int8_t pump_1[10] = {7, 45, 30, 0, 0, 0, 1, 1, 1, 1};
 int8_t pump_2[10] = {21, 22, 23};
 int8_t pump_3[10] = {13, 32, 33};
@@ -65,6 +81,8 @@ int8_t pump_test[4] = {0, 0, 0, 0};
 int lcd_on = 0;
 byte flag = 0;
 double counter, lcd_count = 0;
+
+int16_t unixtime = 0;
 
 void setup() {
     enc1.setType(TYPE2);
@@ -236,16 +254,18 @@ void READ_TIME_RTC() {
         date    = (((date & B00110000) >> 4) * 10 + (date & B00001111));     //Convert BCD to decimal  1-31
         month   = (((month & B00010000) >> 4) * 10 + (month & B00001111));   //msb7 is century overflow
         year    = (((year & B11110000) >> 4) * 10 + (year & B00001111));
+
+        unixtime += year  * 12 * 30 * 24 * 60 * 60;
+        unixtime += month      * 30 * 24 * 60 * 60;
+        unixtime += day             * 24 * 60 * 60;
+        unixtime += h                    * 60 * 60;
+        unixtime += m                         * 60;
+        unixtime += s;
     }
 }
 
-void isrCLK() {
-    enc1.tick();  // отработка в прерывании
-}
-
-void isrDT() {
-    enc1.tick();  // отработка в прерывании
-}
+void isrCLK() { enc1.tick(); }  // отработка в прерывании
+void isrDT() { enc1.tick(); } // отработка в прерывании
 
 void LCD_Backlight() {
     if (lcd_on == 0) {
@@ -310,7 +330,9 @@ void loop() {
     READ_TIME_RTC();
     enc1.tick();
     MAIN();
-    PUMPS();
+    if ( !PUMPS_CIRCLE() ) {
+        PUMPS();
+    }
     LCD_Backlight();
 }
 
@@ -325,13 +347,13 @@ void MAIN() {
         counter++;
     }
 
-    if (counter == DELAY_MENU ) {
+    /*if (counter == DELAY_MENU ) {
         lcd.clear();
         counter = 0;
         menu_val = 1;
         menu_val_2 = 0;
         EEPROM_WR();
-    }
+    }*/
 
     if (enc1.isClick()) {
         menu_val_2 = 0;
@@ -808,13 +830,38 @@ void MAIN() {
             }
             break;
         case 8:
-            lcd.setCursor(0, 0);
-            lcd.setCursor(0, 1);
-            break;
+            lcd.setCursor(3, 0);
+            lcd.print("КРУГОВОЙ ПОЛИВ");
+
+            lcd.setCursor(1, 2);
+            lcd.print("ПОМПЫ:");
+
+            if (enc1.isRight()) {
+                //if (++menu_circle >= 4) menu_circle = 0;
+                for (int i=0; i < 4; i++ ) { menu_circle_min[i] = 10; }
+            } else if (enc1.isLeft()) {
+                for (int i=0; i < 4; i++ ) { menu_circle_min[i] = 0; }
+                //if (--menu_circle < 0) menu_circle = 3;
+            }
+
+            lcd.setCursor(8, 2);
+
+            for (int i = 0; i < 4; i++) {
+                if ( i == menu_circle ) {
+                    lcd.write(126);
+                } else {
+                    lcd.write(" ");
+                }
+                lcd.print(menu_circle_min[i]);
+            }
+
+            if (enc1.isRightH()) {
+                menu_circle_min[menu_circle]++;
+            } else if (enc1.isLeftH()) {
+                if (--menu_circle_min[menu_circle] < 0) menu_circle_min[menu_circle] = 0;
+            }
     }
 }
-
-
 
 void DAY(int8_t _day ) {
     switch (_day) {
@@ -1249,6 +1296,27 @@ void Pump_screen (int8_t *p, String p_name ) {
             }
             break;
     }
+}
+
+int PUMPS_CIRCLE() {
+    int work = 0;
+    for (int i = 0; i < 4; i++) {
+        if ( menu_circle_min[i] > 0 && work == 0 ) {
+            digitalWrite(pumps[i].Pin, LOW);
+            work = i + 1;
+        } else {
+            digitalWrite(pumps[i].Pin, HIGH);
+        }
+    }
+
+    if (work) {
+        if ( menu_circle_min_cur != m ) {
+            menu_circle_min_cur = m;
+            menu_circle_min[ work-1 ]--;
+        }
+    }
+
+    return work;
 }
 
 //опрос помп
