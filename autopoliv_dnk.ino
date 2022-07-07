@@ -374,25 +374,11 @@ void MAIN() {
         case 1:
             //часы
             lcd.setCursor(0, 0);
-
-            if (h < 10) {
-                lcd.print("0");
-            }
-            lcd.print(h);
-            lcd.print(":");
-
-            if (m < 10) {
-                lcd.print("0");
-            }
-            lcd.print(m);
-
+            lcd_print_2d(h); lcd.print(":"); lcd_print_2d(m);
             lcd.setCursor(1, 1);
-            if (s < 10) {
-                lcd.print("0");
-            }
-            lcd.print(s);
+            lcd_print_2d(s);
             lcd.setCursor(1, 3);
-            DAY(day);
+            lcd_print_day(day);
 
             //вывод на дисплей активности помп
             if(pump_1[day+2]==1) {
@@ -439,18 +425,10 @@ void MAIN() {
             lcd.print(P1);
             lcd.setCursor(10, 0);
 
-            if (pump_1[0] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_1[0]);
+            lcd_print_2d(pump_1[0]);
             lcd.print(":");
 
-            if (pump_1[1] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_1[1]);
+            lcd_print_2d(pump_1[1]);
             lcd.print(" * ");
             lcd.print(pump_1[2]);
 
@@ -458,18 +436,10 @@ void MAIN() {
             lcd.print(P2);
             lcd.setCursor(10, 1);
 
-            if (pump_2[0] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_2[0]);
+            lcd_print_2d(pump_2[0]);
             lcd.print(":");
 
-            if (pump_2[1] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_2[1]);
+            lcd_print_2d(pump_2[1]);
             lcd.print(" * ");
             lcd.print(pump_2[2]);
 
@@ -477,18 +447,10 @@ void MAIN() {
             lcd.print(P3);
             lcd.setCursor(10, 2);
 
-            if (pump_3[0] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_3[0]);
+            lcd_print_2d(pump_3[0]);
             lcd.print(":");
 
-            if (pump_3[1] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_3[1]);
+            lcd_print_2d(pump_3[1]);
             lcd.print(" * ");
             lcd.print(pump_3[2]);
 
@@ -496,18 +458,10 @@ void MAIN() {
             lcd.print(P4);
             lcd.setCursor(10, 3);
 
-            if (pump_4[0] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_4[0]);
+            lcd_print_2d(pump_4[0]);
             lcd.print(":");
 
-            if (pump_4[1] < 10) {
-                lcd.print("0");
-            }
-
-            lcd.print(pump_4[1]);
+            lcd_print_2d(pump_4[1]);
             lcd.print(" * ");
             lcd.print(pump_4[2]);
 
@@ -518,21 +472,10 @@ void MAIN() {
 
             //часы
             lcd.setCursor(0, 0);
-            if (h < 10) {
-                lcd.print("0");
-            }
-            lcd.print(h);
-            lcd.print(":");
-            if (m < 10) {
-                lcd.print("0");
-            }
-            lcd.print(m);
-
+            lcd_print_2d(h); lcd.print(":"); lcd_print_2d(m);
             lcd.setCursor(1, 1);
-            if (s < 10) {
-                lcd.print("0");
-            }
-            lcd.print(s);
+            lcd_print_2d(s);
+
             lcd.setCursor(1, 3);
             lcd.print("ПОМПЫ:");
             lcd.setCursor(8, 3);
@@ -626,33 +569,21 @@ void MAIN() {
             lcd.setCursor(0, 0);
             lcd.print("Time set ");
             lcd.setCursor(10, 0);
-            if (h < 10) {
-                lcd.print("0");
-            }
-            lcd.print(h);
+            lcd_print_2d(h);
             lcd.setCursor(13, 0);
-            if (m < 10) {
-                lcd.print("0");
-            }
-            lcd.print(m);
+            lcd_print_2d(m);
 
             lcd.setCursor(0, 1);
             lcd.print("Date: ");
             lcd.setCursor(6, 1);
-            if (date < 10) {
-                lcd.print("0");
-            }
-            lcd.print(date);
+            lcd_print_2d(date);
             lcd.setCursor(9, 1);
-            if (month < 10) {
-                lcd.print("0");
-            }
-            lcd.print(month);
+            lcd_print_2d(month);
             lcd.setCursor(12, 1);
             lcd.print(year);
 
             lcd.setCursor(15, 1);
-            DAY(day);
+            lcd_print_day(day);
             lcd.setCursor(0, 2);
             lcd.print("LCD ");
             lcd.setCursor(5, 2);
@@ -851,7 +782,7 @@ void MAIN() {
     }
 }
 
-void DAY(int8_t _day ) {
+void lcd_print_day(int8_t _day ) {
     switch (_day) {
         case 1:
             lcd.print("ВС");
@@ -897,15 +828,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.write(126);
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -936,15 +861,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.write(126);
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -975,15 +894,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.write(126);
             lcd.setCursor(14, 1);
@@ -1014,15 +927,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1053,15 +960,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1092,15 +993,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1131,15 +1026,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1170,15 +1059,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1209,15 +1092,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1248,15 +1125,9 @@ void Pump_screen (int8_t *p, String p_name ) {
             lcd.setCursor(5, 1);
             lcd.print(" ");
             lcd.setCursor(6, 1);
-            if (p[0] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[0]);
+            lcd_print_2d(p[0]);
             lcd.print(":");
-            if (p[1] < 10) {
-                lcd.print("0");
-            }
-            lcd.print(p[1]);
+            lcd_print_2d(p[1]);
             lcd.setCursor(13, 1);
             lcd.print(" ");
             lcd.setCursor(14, 1);
@@ -1367,4 +1238,6 @@ void PUMPS() {
         }
     }
 }
+
+void lcd_print_2d( int n ) { if (n < 10) lcd.print("0"); lcd.print(n); }
 
